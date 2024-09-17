@@ -26,7 +26,7 @@ export default {
       this.movies = response.data.results;
     },
     getLanguageFlag(languageCode) {
-      return this.languageFlags[languageCode] || '🏳️';  // bandiera messa a caso in caso se non c'è nell'array 
+      return this.languageFlags[languageCode] || '/img/bandieracasual.png';  // bandiera messa a caso in caso se non c'è nell'array 
     }
   }
 }
@@ -53,7 +53,7 @@ export default {
           <h3>{{ movie.title }}</h3>
           <p><strong>Titolo Originale:</strong> {{ movie.original_title }}</p>
           <p><strong>Lingua:</strong> 
-            <img :src="getLanguageFlag(movie.original_language)" />
+            <img :src="getLanguageFlag(movie.original_language)" alt="lingua" />
           </p>
           <p><strong>Voto:</strong> {{ movie.vote_average }}</p>
         </li>
