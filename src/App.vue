@@ -15,7 +15,9 @@ export default {
         de: 'https://flagcdn.com/w40/de.png',
         es: 'https://flagcdn.com/w40/es.png',
         ar: '/img/imgyoussef.jpg',   // (immagine mia per la lingua araba)
-      }
+      },
+      imageBaseUrl: 'https://image.tmdb.org/t/p/', // URL base per le immagini
+      imageSize: 'w342' // Dimensione dell'immagine scelta
     };
   },
 
@@ -35,6 +37,9 @@ export default {
     },
     getLanguageFlag(languageCode) {
       return this.languageFlags[languageCode] || '/img/bandieracasual.png';  // bandiera messa a caso in caso se non c'è nell'array 
+    },
+    getPosterUrl(posterPath) {
+      return `${this.imageBaseUrl}${this.imageSize}${posterPath}`; // Costruisce l'URL completo del poster
     }
   }
 }
@@ -61,9 +66,12 @@ export default {
           <h3>{{ movie.title }}</h3>
           <p><strong>Titolo Originale:</strong> {{ movie.original_title }}</p>
           <p><strong>Lingua:</strong> 
-            <img :src="getLanguageFlag(movie.original_language)" alt="lingua" />
+            <img :src="getLanguageFlag(movie.original_language)" alt="lingua" style="width: 30px; height: 20px;"/>
           </p>
           <p><strong>Voto:</strong> {{ movie.vote_average }}</p>
+          <!-- mostra la copertina del film -->
+          <img v-if="movie.poster_path" :src="getPosterUrl(movie.poster_path)" alt="Poster del film" style="width: 200px;" />
+          <p v-else>Nessuna immagine disponibile</p>
         </li>
       </ul>
     </div>
@@ -76,9 +84,12 @@ export default {
           <h3>{{ show.name }}</h3>
           <p><strong>Titolo Originale:</strong> {{ show.original_name }}</p>
           <p><strong>Lingua:</strong> 
-            <img :src="getLanguageFlag(show.original_language)" alt="lingua" />
+            <img :src="getLanguageFlag(show.original_language)" alt="lingua" style="width: 30px; height: 20px;" />
           </p>
           <p><strong>Voto:</strong> {{ show.vote_average }}</p>
+          <!-- visualizza la copertina della serie TV -->
+          <img v-if="show.poster_path" :src="getPosterUrl(show.poster_path)" alt="Poster della serie TV" style="width: 200px;" />
+          <p v-else>Nessuna immagine disponibile</p>
         </li>
       </ul>
     </div>
@@ -91,10 +102,5 @@ export default {
 </template>
 
 <style >
-
-img{
-  max-width: 50px;
-  max-height: 50px;
-}
 
 </style>
