@@ -40,6 +40,15 @@ export default {
     },
     getPosterUrl(posterPath) {
       return `${this.imageBaseUrl}${this.imageSize}${posterPath}`; // Costruisce l'URL completo del poster
+    },
+    // Arrotonda il voto da 1 a 10 in un numero da 1 a 5
+
+    // potevo usare anche: 
+    // return Math.ceil(voteAverage / 2);
+
+    getStarRating(voteAverage) {
+      // Divide il voto per 2 e prende solo la parte intera
+      return parseInt(voteAverage / 2);
     }
   }
 }
@@ -53,8 +62,8 @@ export default {
     <!-- barra di ricerca -->
 
     <div>
-      <input v-model="query" type="text" placeholder="Inserisci il nome del film o della serie TV" />
-      <button @click="searchMovies">Cerca</button>
+      <input v-model="query" type="text" @keyup.enter="searchMovies"  placeholder="Inserisci il nome del film o della serie TV" />
+      <button @click="searchMovies" >Cerca</button>
     </div>
     
     <!-- risultati dei Film -->
@@ -68,10 +77,19 @@ export default {
           <p><strong>Lingua:</strong> 
             <img :src="getLanguageFlag(movie.original_language)" alt="lingua" style="width: 30px; height: 20px;"/>
           </p>
-          <p><strong>Voto:</strong> {{ movie.vote_average }}</p>
+          <p><strong>Voto:</strong></p> 
+
+          <!-- stelle -->
+          <span v-for="star in getStarRating(movie.vote_average)" :key="star" class="star filled">★</span>
+          <span v-for="emptyStar in 5 - getStarRating(movie.vote_average)" :key="emptyStar" class="star empty">★</span>
+          
           <!-- mostra la copertina del film -->
-          <img v-if="movie.poster_path" :src="getPosterUrl(movie.poster_path)" alt="Poster del film" style="width: 200px;" />
-          <p v-else>Nessuna immagine disponibile</p>
+            <div>
+              <img class="copertina" v-if="movie.poster_path" :src="getPosterUrl(movie.poster_path)" alt="Poster del film" />
+              <p v-else>Nessuna immagine disponibile</p>
+            </div>
+
+
         </li>
       </ul>
     </div>
@@ -86,10 +104,19 @@ export default {
           <p><strong>Lingua:</strong> 
             <img :src="getLanguageFlag(show.original_language)" alt="lingua" style="width: 30px; height: 20px;" />
           </p>
-          <p><strong>Voto:</strong> {{ show.vote_average }}</p>
+          <p><strong>Voto:</strong></p>
+
+          <!-- stelle -->
+          <span v-for="star in getStarRating(show.vote_average)" :key="star" class="star filled">★</span>
+          <span v-for="emptyStar in 5 - getStarRating(show.vote_average)" :key="emptyStar" class="star empty">★</span>
+          
           <!-- visualizza la copertina della serie TV -->
-          <img v-if="show.poster_path" :src="getPosterUrl(show.poster_path)" alt="Poster della serie TV" style="width: 200px;" />
-          <p v-else>Nessuna immagine disponibile</p>
+          <div>
+            <img class="copertina" v-if="show.poster_path" :src="getPosterUrl(show.poster_path)" alt="Poster della serie TV" />
+            <p v-else>Nessuna immagine disponibile</p>
+          </div>
+          
+          
         </li>
       </ul>
     </div>
@@ -101,6 +128,30 @@ export default {
   </div>
 </template>
 
-<style >
+<style scoped lang="scss">
+.copertina {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin-top: 10px;
+}
+  /* Stile generale per le stelle */
+  .star {
+    margin-right: 5px;
+    font-size: 20px;
+  }
 
+  /* Stile per le stelle piene */
+  .filled {
+    color: gold;
+    margin-right: 5px;
+    font-size: 20px;
+  }
+
+  /* Stile per le stelle vuote */
+  .empty {
+    color: lightgray;
+    margin-right: 5px;
+    font-size: 20px;
+  }
 </style>
