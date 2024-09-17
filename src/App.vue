@@ -45,8 +45,14 @@ export default {
         </li>
       </ul>
     </div>
-    
+
+    <!-- in caso non ci sia nessun film -->
+    <div v-else>
+      <p>Nessun film trovato.</p>
+    </div>
+
   </div>
+
 </template>
 
 <style scoped>
