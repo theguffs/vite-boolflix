@@ -17,7 +17,8 @@ export default {
         ar: '/img/imgyoussef.jpg',   // (immagine mia per la lingua araba)
       },
       imageBaseUrl: 'https://image.tmdb.org/t/p/', // URL base per le immagini
-      imageSize: 'w342' // Dimensione dell'immagine scelta
+      imageSize: 'w342', // Dimensione dell'immagine scelta
+      hoverCard: null // Stato della card in hover
     };
   },
 
@@ -57,101 +58,169 @@ export default {
 
 <template>
   <div id="app">
-    <h1>Cerca Film e Serie TV</h1>
-    
-    <!-- barra di ricerca -->
+    <header>
+      <h1>MyNetflix</h1>
+      <div class="search-bar">
+        <input v-model="query" type="text" @keyup.enter="searchMovies" placeholder="Cerca film o serie TV" />
+        <button @click="searchMovies">Cerca</button>
+      </div>
+    </header>
 
-    <div>
-      <input v-model="query" type="text" @keyup.enter="searchMovies"  placeholder="Inserisci il nome del film o della serie TV" />
-      <button @click="searchMovies" >Cerca</button>
-    </div>
-    
     <!-- risultati dei Film -->
-
-    <div v-if="movies.length > 0">
+    <section v-if="movies.length > 0" class="section-results">
       <h2>Film trovati:</h2>
-      <ul>
-        <li v-for="movie in movies" :key="movie.id">
-          <h3>{{ movie.title }}</h3>
-          <p><strong>Titolo Originale:</strong> {{ movie.original_title }}</p>
-          <p><strong>Lingua:</strong> 
-            <img :src="getLanguageFlag(movie.original_language)" alt="lingua" style="width: 30px; height: 20px;"/>
-          </p>
-          <p><strong>Voto:</strong></p> 
-
-          <!-- stelle -->
-          <span v-for="star in getStarRating(movie.vote_average)" :key="star" class="star filled">★</span>
-          <span v-for="emptyStar in 5 - getStarRating(movie.vote_average)" :key="emptyStar" class="star empty">★</span>
-          
+      <div class="card-container">
+        <div
+          v-for="movie in movies"
+          :key="movie.id"
+          class="card"
+          @mouseover="hoverCard = movie.id"
+          @mouseleave="hoverCard = null"
+        >
           <!-- mostra la copertina del film -->
-            <div>
-              <img class="copertina" v-if="movie.poster_path" :src="getPosterUrl(movie.poster_path)" alt="Poster del film" />
-              <p v-else>Nessuna immagine disponibile</p>
-            </div>
-
-
-        </li>
-      </ul>
-    </div>
+          <img class="poster" :src="getPosterUrl(movie.poster_path)" alt="Poster del film" v-if="movie.poster_path" />
+          <div class="card-content" v-if="hoverCard === movie.id">
+            <h3>{{ movie.title }}</h3>
+            <p><strong>Titolo Originale:</strong> {{ movie.original_title }}</p>
+            <p><strong>Lingua:</strong> 
+              <img :src="getLanguageFlag(movie.original_language)" alt="lingua" style="width: 30px; height: 20px;" />
+            </p>
+            <p><strong>Voto:</strong></p>
+            <!-- stelle -->
+            <span v-for="star in getStarRating(movie.vote_average)" :key="star" class="star filled">★</span>
+            <span v-for="emptyStar in 5 - getStarRating(movie.vote_average)" :key="emptyStar" class="star empty">★</span>
+            <p><strong>Overview:</strong> {{ movie.overview }}</p>
+          </div>
+        </div>
+      </div>
+    </section>
 
     <!-- risultati delle Serie TV -->
-    <div v-if="tvShows.length > 0">
+    <section v-if="tvShows.length > 0" class="section-results">
       <h2>Serie TV trovate:</h2>
-      <ul>
-        <li v-for="show in tvShows" :key="show.id">
-          <h3>{{ show.name }}</h3>
-          <p><strong>Titolo Originale:</strong> {{ show.original_name }}</p>
-          <p><strong>Lingua:</strong> 
-            <img :src="getLanguageFlag(show.original_language)" alt="lingua" style="width: 30px; height: 20px;" />
-          </p>
-          <p><strong>Voto:</strong></p>
-
-          <!-- stelle -->
-          <span v-for="star in getStarRating(show.vote_average)" :key="star" class="star filled">★</span>
-          <span v-for="emptyStar in 5 - getStarRating(show.vote_average)" :key="emptyStar" class="star empty">★</span>
-          
+      <div class="card-container">
+        <div
+          v-for="show in tvShows"
+          :key="show.id"
+          class="card"
+          @mouseover="hoverCard = show.id"
+          @mouseleave="hoverCard = null"
+        >
           <!-- visualizza la copertina della serie TV -->
-          <div>
-            <img class="copertina" v-if="show.poster_path" :src="getPosterUrl(show.poster_path)" alt="Poster della serie TV" />
-            <p v-else>Nessuna immagine disponibile</p>
+          <img class="poster" :src="getPosterUrl(show.poster_path)" alt="Poster della serie TV" v-if="show.poster_path" />
+          <div class="card-content" v-if="hoverCard === show.id">
+            <h3>{{ show.name }}</h3>
+            <p><strong>Titolo Originale:</strong> {{ show.original_name }}</p>
+            <p><strong>Lingua:</strong> 
+              <img :src="getLanguageFlag(show.original_language)" alt="lingua" style="width: 30px; height: 20px;" />
+            </p>
+            <p><strong>Voto:</strong></p>
+            <!-- stelle -->
+            <span v-for="star in getStarRating(show.vote_average)" :key="star" class="star filled">★</span>
+            <span v-for="emptyStar in 5 - getStarRating(show.vote_average)" :key="emptyStar" class="star empty">★</span>
+            <p><strong>Overview:</strong> {{ show.overview }}</p>
           </div>
-          
-          
-        </li>
-      </ul>
-    </div>
+        </div>
+      </div>
+    </section>
 
     <!-- messaggio per nessun risultato -->
-    <div v-else>
+    <section v-else>
       <p>Nessun film o serie TV trovata.</p>
-    </div>  
+    </section>  
   </div>
 </template>
 
 <style scoped lang="scss">
-.copertina {
-  max-width: 100%;
-  height: auto;
-  display: block;
-  margin-top: 10px;
+
+#app {
+  font-family: 'Arial', sans-serif;
+  text-align: center;
+  background-color: #141414;
+  color: white;
+  padding: 20px;
 }
-  /* Stile generale per le stelle */
-  .star {
-    margin-right: 5px;
-    font-size: 20px;
-  }
 
-  /* Stile per le stelle piene */
-  .filled {
-    color: gold;
-    margin-right: 5px;
-    font-size: 20px;
-  }
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+}
 
-  /* Stile per le stelle vuote */
-  .empty {
-    color: lightgray;
-    margin-right: 5px;
-    font-size: 20px;
-  }
+h1 {
+  font-size: 2.5rem;
+  color: red;
+}
+
+.search-bar input {
+  padding: 10px;
+  width: 300px;
+  font-size: 16px;
+}
+
+.search-bar button {
+  padding: 10px 20px;
+  background-color: red;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+/* Stile delle card */
+.card-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.card {
+  position: relative;
+  margin: 10px;
+  width: 200px;
+  height: 300px;
+  background-color: #222;
+  overflow: hidden;
+  transition: transform 0.3s ease;
+}
+
+.card:hover {
+  transform: scale(1.1);
+}
+
+.poster {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card-content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.card:hover .card-content {
+  opacity: 1;
+}
+
+/* Stile delle stelle */
+.star {
+  margin-right: 5px;
+  font-size: 20px;
+}
+
+.filled {
+  color: gold;
+}
+
+.empty {
+  color: lightgray;
+}
 </style>
