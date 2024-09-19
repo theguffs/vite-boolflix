@@ -24,7 +24,7 @@ export default {
 
   methods: {
     async searchMovies() {
-      const apiKey = '3a4db1cb907349cc970d7a7e93db75c6';
+      const apiKey = ;
       const movieUrl = `https://api.themoviedb.org/3/search/movie?api_key=${apiKey}&query=${this.query}`;
       const tvUrl = `https://api.themoviedb.org/3/search/tv?api_key=${apiKey}&query=${this.query}`;
 
@@ -223,4 +223,4 @@ h1 {
 .empty {
   color: lightgray;
 }
-</style>
+</style> 
